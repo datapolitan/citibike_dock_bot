@@ -8,10 +8,12 @@ from time import sleep
 from keys_boro import keys
 
 id_boro_dict = collections.defaultdict(str) #dictionary of station ids to boro
-boro_dict = collections.defaultdict(int) #dictionary of values for each boro
+boro_dict = collections.defaultdict(int) #dictionary of active bikes for each boro
 
 def get_id_boro():
-    #boro list setup
+    '''
+    set the id_boro_dict based on the values in the database and create the boro_dict to receive counts for each boro
+    '''
     con = psycopg2.connect(database="utility", user="datapolitan", host="utility.c1erymiua9dx.us-east-1.rds.amazonaws.com")
     cur = con.cursor()
     cur.execute(open("query_boro.sql").read()) #read boros from database
@@ -19,7 +21,7 @@ def get_id_boro():
     for row in q:
         id_boro_dict[str(row[0])] = row[1]
         if row[1] not in boro_dict.keys():
-            boro_dict[row[1] = 0
+            boro_dict[row[1]] = 0
     con.close()
     return
 
