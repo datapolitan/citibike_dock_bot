@@ -49,8 +49,11 @@ def tweet_status(avail_bikes_sum,totalDocks_sum,in_service_station_sum,boro):
     CONSUMER_SECRET = keys['consumer_secret']
     ACCESS_TOKEN = keys['access_token']
     ACCESS_TOKEN_SECRET = keys['access_token_secret']
+    dock_sum = 0.0
+    if totalDocks_sum > 0:
+        dock_sum = round(avail_bikes_sum/float(totalDocks_sum),4) * 100
     twitter = twython.Twython(CONSUMER_KEY,CONSUMER_SECRET,ACCESS_TOKEN,ACCESS_TOKEN_SECRET)
-    twitter.update_status(status="%s Citibikes, or %s%% of dock capacity, are available across %s active docking stations in #%s" % ("{:,.0f}".format(avail_bikes_sum),"%.2f" % (round(avail_bikes_sum/float(totalDocks_sum),4) * 100),in_service_station_sum,boro))
+    twitter.update_status(status="%s Citibikes, or %s%% of dock capacity, are available across %s active docking stations in #%s" % ("{:,.0f}".format(avail_bikes_sum),"%.2f" % (dock_sum),in_service_station_sum,boro))
     return
 
 
