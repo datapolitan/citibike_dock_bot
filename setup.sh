@@ -1,0 +1,1 @@
+ssh -i /Users/richarddunks/Dropbox/Datapolitan/admin/datapolitan_com_virginia.pem ec2-user@52.20.51.98
