@@ -6,7 +6,7 @@ from time import sleep
 
 from keys_boro import keys
 
-id_boro_dict = defaultdict(str) #dictionary of station ids to boro
+id_boro_dict = collections.defaultdict(str) #dictionary of station ids to boro
 boro_list = []
 
 def get_id_boro():
