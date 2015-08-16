@@ -8,7 +8,7 @@ from time import sleep
 from keys_boro import keys
 
 id_boro_dict = collections.defaultdict(str) #dictionary of station ids to boro
-boro_list = []
+boro_dict = collections.defaultdict(int) #dictionary of values for each boro
 
 def get_id_boro():
     #boro list setup
@@ -18,8 +18,8 @@ def get_id_boro():
     q = cur.fetchall()
     for row in q:
         id_boro_dict[str(row[0])] = row[1]
-        if row[1] not in boro_list:
-            boro_list.append(row[1])
+        if row[1] not in boro_dict.keys():
+            boro_dict[row[1] = 0
     con.close()
     return
 
