@@ -2,6 +2,7 @@ import requests
 from collections import defaultdict
 from time import sleep
 import twython
+from keys import keys
 
 def get_cb_dock():
     '''
@@ -24,11 +25,11 @@ def tweet_status(avail_bikes_sum,totalDocks_sum,in_service_station_sum):
     '''
     a function to tweet the input values
     '''
-    consumer_key = "bprCbLVbyzVsgtcdzqHKFWQFM"
-    consumer_secret = "FbgaE0dtAZrfDG5gLNBxIhktTN8zeNqNsLNCBJSnUJ1TDVYD1w"
-    access_token = "3424772890-3iuUUxgOciP54iLN33BJe3ym0Izc7MgFelkltg6"
-    access_token_secret = "97DFnUpcwOs6Ovv3uB3V6E35ht6ZbJpdKMO7grTtgaXLs"
-    twitter = twython.Twython(consumer_key,consumer_secret,access_token,access_token_secret)
+    CONSUMER_KEY = keys['consumer_key']
+    CONSUMER_SECRET = keys['consumer_secret']
+    ACCESS_TOKEN = keys['access_token']
+    ACCESS_TOKEN_SECRET = keys['access_token_secret']
+    twitter = twython.Twython(CONSUMER_KEY,CONSUMER_SECRET,ACCESS_TOKEN,ACCESS_TOKEN_SECRET)
     twitter.update_status(status="%s, or %s%% of #NYC Citibikes are available for rent across %s active stations" % ("{:,.0f}".format(avail_bikes_sum), "%.2f" % (round(avail_bikes_sum/float(totalDocks_sum),4) * 100),in_service_station_sum))
 
 while True:
