@@ -25,7 +25,7 @@ def get_id_boro():
     con.close()
     return
 
-def get_cb_dock(boro):
+def get_cb_dock():
     '''
     get the dock status and compute summary statistics for tweeting
     '''
@@ -34,13 +34,18 @@ def get_cb_dock(boro):
     totalDocks_sum = 0
     avail_bikes_sum = 0
     in_service_station_sum = 0
+    #re-initialize the boro_dict to reset values
+    boro_dict = collections.defaultdict(int)
     for station in r.json()['stationBeanList']:
-        if station['statusKey'] == 1 and id_boro_dict[str(station['id'])] == boro:
+        if station['statusKey'] == 1:
             totalDocks_sum += station['totalDocks']
             avail_bikes_sum += station['availableBikes']
             in_service_station_sum += 1
-    tweet_status(avail_bikes_sum,totalDocks_sum,in_service_station_sum,boro)
-    # print "%s Citibikes, or %s%% of dock capacity, are available across %s active docking stations in #%s" % ("{:,.0f}".format(avail_bikes_sum),"%.2f" % (round(avail_bikes_sum/float(totalDocks_sum),4) * 100),in_service_station_sum,boro)
+            #update the boro dict with the number of available bikes in that boro
+            boro_dict[id_boro_dict[str(station['id'])]] += station['availableBikes']
+    # tweet_status(avail_bikes_sum,totalDocks_sum,in_service_station_sum,boro)
+    print "%s Citibikes are available in %s active docks, %s in Manhattan, %s in Brooklyn, %s in Queens" % ("{:,.0f}".format(avail_bikes_sum),"{:,.0f}".format(totalDocks_sum),"{:,.0f}".format(boro_dict['Manhattan']),"{:,.0f}".format(boro_dict['Brooklyn']),"{:,.0f}".format(boro_dict['Queens']))
+
     return
 
 def tweet_status(avail_bikes_sum,totalDocks_sum,in_service_station_sum,boro):
