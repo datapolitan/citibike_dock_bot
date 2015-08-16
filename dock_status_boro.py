@@ -2,6 +2,7 @@ import requests
 import collections
 import psycopg2
 import psycopg2.extras
+import twython
 from time import sleep
 
 from keys_boro import keys
