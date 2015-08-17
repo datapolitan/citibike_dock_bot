@@ -4,11 +4,12 @@ import psycopg2
 import psycopg2.extras
 import twython
 from time import sleep
+import time
+from dateutil import parser
 
 from keys_boro import keys
 
 id_boro_dict = collections.defaultdict(str) #dictionary of station ids to boro
-# boro_dict = collections.defaultdict(int) #dictionary of active bikes for each boro
 
 def get_id_boro():
     '''
@@ -30,7 +31,9 @@ def get_cb_dock():
     get the dock status and compute summary statistics for tweeting
     '''
     #need to wrap in try-catch
-    r = requests.get('http://www.citibikenyc.com/stations/json')
+    r = requests.get('http://www.citibikenyc.com/stations/json')    
+    
+    ####### process the stations json file
     totalDocks_sum = 0
     avail_bikes_sum = 0
     in_service_station_sum = 0
@@ -43,7 +46,18 @@ def get_cb_dock():
             in_service_station_sum += 1
             #update the boro dict with the number of available bikes in that boro
             boro_dict[id_boro_dict[str(station['id'])]] += station['availableBikes']
+       
+    ###### publish tweet
     tweet_status(avail_bikes_sum,totalDocks_sum,in_service_station_sum,boro_dict)
+
+    ###### save to database
+    execution_time = parser.parse(r.json()['executionTime']) #datetime object from file execution time
+    boro_order = ['Manhattan','Brooklyn','Queens']
+    boro_bike_list = [] #organize values for each boro
+    for b in boro_order:
+        boro_bike_list.append(str(boro_dict[b]))
+
+    write_status(execution_time,avail_bikes_sum,boro_bike_list)
     return
 
 def tweet_status(avail_bikes_sum,totalDocks_sum,in_service_station_sum,boro_dict):
@@ -66,7 +80,19 @@ def tweet_status(avail_bikes_sum,totalDocks_sum,in_service_station_sum,boro_dict
 
     ####Should add some length checking to tweet jik
     twitter.update_status(status="%s #Citibikes are available in %s active docks: %s in #Manhattan, %s in #Brooklyn, and %s in #Queens" % ("{:,.0f}".format(avail_bikes_sum),"{:,.0f}".format(totalDocks_sum),"{:,.0f}".format(boro_dict['Manhattan']),"{:,.0f}".format(boro_dict['Brooklyn']),"{:,.0f}".format(boro_dict['Queens'])))
-    #print "%s Citibikes are available in %s active docks, %s in Manhattan, %s in Brooklyn, and %s in Queens" % ("{:,.0f}".format(avail_bikes_sum),"{:,.0f}".format(totalDocks_sum),"{:,.0f}".format(boro_dict['Manhattan']),"{:,.0f}".format(boro_dict['Brooklyn']),"{:,.0f}".format(boro_dict['Queens']))
+    # print "%s Citibikes are available in %s active docks, %s in Manhattan, %s in Brooklyn, and %s in Queens" % ("{:,.0f}".format(avail_bikes_sum),"{:,.0f}".format(totalDocks_sum),"{:,.0f}".format(boro_dict['Manhattan']),"{:,.0f}".format(boro_dict['Brooklyn']),"{:,.0f}".format(boro_dict['Queens']))
+    return
+
+def write_status(execution_time,avail_bikes_sum,boro_bike_list):
+    # write active bike sums into database
+
+    con = psycopg2.connect(database="utility", user="datapolitan", host="utility.c1erymiua9dx.us-east-1.rds.amazonaws.com")
+    cur = con.cursor()
+    
+    sql = "INSERT INTO public.cb_boro_stats (execution_time, nyc_avail_bikes, mhtn_avail_bikes, brklyn_avail_bikes, qns_avail_bikes) VALUES (%s,%s,%s,%s,%s)"
+    cur.execute(sql,tuple([execution_time] + [avail_bikes_sum] + boro_bike_list))
+    con.commit()
+    con.close()
     return
 
 #####program execution starts
