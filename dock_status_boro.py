@@ -8,7 +8,9 @@ from time import sleep
 from keys_boro import keys
 
 id_boro_dict = collections.defaultdict(str) #dictionary of station ids to boro
-# boro_dict = collections.defaultdict(int) #dictionary of active bikes for each boro
+process_date = None
+daily_stat = collections.defaultdict(list) # dictionary of stats keyed on timestamp, value = list[total,Mnhtn,brkyln,qns]
+
 
 def get_id_boro():
     '''
@@ -31,6 +33,21 @@ def get_cb_dock():
     '''
     #need to wrap in try-catch
     r = requests.get('http://www.citibikenyc.com/stations/json')
+    global process_date
+    
+    curr_date = r.json()['executionTime'][:10] 
+    access_time = ts = parser.parse(r.json()['executionTime'][11:]).strftime("%H:%M")
+    
+    # check if processing date is null
+    if process_date is None:
+        process_date = curr_date
+#    elif process_date != curr_date:
+        #flush out report
+#        with open('%s_output.csv' % process_date) as outputFile:
+#            for k,v in daily_stat.iteritems():
+    # Check the curr date against the processing date
+    
+    ####### process the stations json file
     totalDocks_sum = 0
     avail_bikes_sum = 0
     in_service_station_sum = 0
@@ -43,8 +60,15 @@ def get_cb_dock():
             in_service_station_sum += 1
             #update the boro dict with the number of available bikes in that boro
             boro_dict[id_boro_dict[str(station['id'])]] += station['availableBikes']
-    tweet_status(avail_bikes_sum,totalDocks_sum,in_service_station_sum,boro_dict)
-    return
+    tweet_status(avail_bikes_sum,totalDocks_sum,in_service_station_sum,boro_dict)   
+    
+    #update the daily stats
+    boro_order = ['Manhattan','Brooklyn','Queens']
+    boro_bike_list = []
+    for b in boro_order:
+        boro_bike_list.append(str(boro_dict[b]))
+    daily_stat[access_time] = [str(avail_bikes_sum)] + boro_bike_list
+    return daily_stat
 
 def tweet_status(avail_bikes_sum,totalDocks_sum,in_service_station_sum,boro_dict):
     '''
@@ -65,8 +89,8 @@ def tweet_status(avail_bikes_sum,totalDocks_sum,in_service_station_sum,boro_dict
     #######
 
     ####Should add some length checking to tweet jik
-    twitter.update_status(status="%s #Citibikes are available in %s active docks, %s in #Manhattan, %s in #Brooklyn, and %s in #Queens" % ("{:,.0f}".format(avail_bikes_sum),"{:,.0f}".format(totalDocks_sum),"{:,.0f}".format(boro_dict['Manhattan']),"{:,.0f}".format(boro_dict['Brooklyn']),"{:,.0f}".format(boro_dict['Queens'])))
-    #print "%s Citibikes are available in %s active docks, %s in Manhattan, %s in Brooklyn, and %s in Queens" % ("{:,.0f}".format(avail_bikes_sum),"{:,.0f}".format(totalDocks_sum),"{:,.0f}".format(boro_dict['Manhattan']),"{:,.0f}".format(boro_dict['Brooklyn']),"{:,.0f}".format(boro_dict['Queens']))
+    #twitter.update_status(status="%s #Citibikes are available in %s active docks, %s in #Manhattan, %s in #Brooklyn, and %s in #Queens" % ("{:,.0f}".format(avail_bikes_sum),"{:,.0f}".format(totalDocks_sum),"{:,.0f}".format(boro_dict['Manhattan']),"{:,.0f}".format(boro_dict['Brooklyn']),"{:,.0f}".format(boro_dict['Queens'])))
+    print "%s Citibikes are available in %s active docks, %s in Manhattan, %s in Brooklyn, and %s in Queens" % ("{:,.0f}".format(avail_bikes_sum),"{:,.0f}".format(totalDocks_sum),"{:,.0f}".format(boro_dict['Manhattan']),"{:,.0f}".format(boro_dict['Brooklyn']),"{:,.0f}".format(boro_dict['Queens']))
     return
 
 #####program execution starts
