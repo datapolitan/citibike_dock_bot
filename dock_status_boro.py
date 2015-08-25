@@ -52,10 +52,13 @@ def get_cb_dock():
 
     ###### save to database
     execution_time = parser.parse(r.json()['executionTime']) #datetime object from file execution time
-    boro_order = ['Manhattan','Brooklyn','Queens']
+    boro_order = ['Manhattan','Brooklyn','Queens','New Jersey']
     boro_bike_list = [] #organize values for each boro
     for b in boro_order:
-        boro_bike_list.append(str(boro_dict[b]))
+        if b in boro_dict.keys():
+            boro_bike_list.append(str(boro_dict[b]))
+        else:
+            boro_bike_list.append(None)
     write_status(execution_time,avail_bikes_sum,boro_bike_list)
 
     return
