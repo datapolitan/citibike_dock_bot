@@ -52,10 +52,13 @@ def get_cb_dock():
 
     ###### save to database
     execution_time = parser.parse(r.json()['executionTime']) #datetime object from file execution time
-    boro_order = ['Manhattan','Brooklyn','Queens']
+    boro_order = ['Manhattan','Brooklyn','Queens','New Jersey']
     boro_bike_list = [] #organize values for each boro
     for b in boro_order:
-        boro_bike_list.append(str(boro_dict[b]))
+        if b in boro_dict.keys():
+            boro_bike_list.append(str(boro_dict[b]))
+        else:
+            boro_bike_list.append(None)
     write_status(execution_time,avail_bikes_sum,boro_bike_list)
 
     return
@@ -92,7 +95,7 @@ def write_status(execution_time,avail_bikes_sum,boro_bike_list):
     con = psycopg2.connect(database="utility", user="datapolitan", host="utility.c1erymiua9dx.us-east-1.rds.amazonaws.com")
     cur = con.cursor()
     
-    sql = "INSERT INTO public.cb_boro_stats (execution_time, nyc_avail_bikes, mhtn_avail_bikes, brklyn_avail_bikes, qns_avail_bikes) VALUES (%s,%s,%s,%s,%s)"
+    sql = "INSERT INTO public.cb_boro_stats (execution_time, nyc_avail_bikes, mhtn_avail_bikes, brklyn_avail_bikes, qns_avail_bikes,nj_avail_bikes) VALUES (%s,%s,%s,%s,%s,%s)"
     cur.execute(sql,tuple([execution_time] + [avail_bikes_sum] + boro_bike_list))
     con.commit()
     con.close()
