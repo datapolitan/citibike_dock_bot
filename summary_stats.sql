@@ -1,4 +1,6 @@
-with hour_ex AS (
+--A script to calculate summary statistics for the past 12 hours
+
+WITH hour_ex AS (
     SELECT 
         extract(hour from execution_time) as hour_ex, 
         nyc_avail_bikes,
@@ -6,7 +8,8 @@ with hour_ex AS (
         brklyn_avail_bikes,
         qns_avail_bikes
     FROM public.cb_boro_stats
-    WHERE execution_time >= NOW()::date - '1 day'::INTERVAL
+    --account for the 4 hours for UTC
+    WHERE execution_time >= now() - interval '16 hours' 
     )
 
 SELECT 
