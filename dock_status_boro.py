@@ -56,8 +56,8 @@ def get_cb_dock():
     boro_bike_list = [] #organize values for each boro
     for b in boro_order:
         boro_bike_list.append(str(boro_dict[b]))
-
     write_status(execution_time,avail_bikes_sum,boro_bike_list)
+
     return
 
 def tweet_status(avail_bikes_sum,totalDocks_sum,in_service_station_sum,boro_dict):
@@ -79,7 +79,10 @@ def tweet_status(avail_bikes_sum,totalDocks_sum,in_service_station_sum,boro_dict
     #######
 
     ####Should add some length checking to tweet jik
-    twitter.update_status(status="%s #Citibikes are available in %s active docks: %s in #Manhattan, %s in #Brooklyn, and %s in #Queens" % ("{:,.0f}".format(avail_bikes_sum),"{:,.0f}".format(totalDocks_sum),"{:,.0f}".format(boro_dict['Manhattan']),"{:,.0f}".format(boro_dict['Brooklyn']),"{:,.0f}".format(boro_dict['Queens'])))
+    try:
+        twitter.update_status(status="%s #Citibikes are available in %s active docks: %s in #Manhattan, %s in #Brooklyn, and %s in #Queens" % ("{:,.0f}".format(avail_bikes_sum),"{:,.0f}".format(totalDocks_sum),"{:,.0f}".format(boro_dict['Manhattan']),"{:,.0f}".format(boro_dict['Brooklyn']),"{:,.0f}".format(boro_dict['Queens'])))
+    except:
+        pass
     # print "%s Citibikes are available in %s active docks, %s in Manhattan, %s in Brooklyn, and %s in Queens" % ("{:,.0f}".format(avail_bikes_sum),"{:,.0f}".format(totalDocks_sum),"{:,.0f}".format(boro_dict['Manhattan']),"{:,.0f}".format(boro_dict['Brooklyn']),"{:,.0f}".format(boro_dict['Queens']))
     return
 
