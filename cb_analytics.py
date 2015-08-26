@@ -21,7 +21,7 @@ def tweet_status(day):
     ####Should add some length checking to tweet jik
     photo = open(day + '.png', 'rb')
     response = twitter.upload_media(media=photo)
-    twitter.update_status(status='The past 12 hours of active #Citibikes across #NYC, #Manhattan, #Brooklyn, and #Queens', media_ids=[response['media_id']])
+    twitter.update_status(status='The past 24 hours of active #Citibikes across #NYC, #Manhattan, #Brooklyn, and #Queens', media_ids=[response['media_id']])
     return
 
 con = psycopg2.connect(database="utility", user="datapolitan", host="utility.c1erymiua9dx.us-east-1.rds.amazonaws.com")
@@ -32,7 +32,7 @@ df = pd.read_sql_query(open("summary_stats.sql").read(),con,index_col='hour_ex')
 con.close()
 
 ##### Plot chart
-ax = df.plot(figsize=(10,5),title="Available Citibikes for Past 12 hours")
+ax = df.plot(figsize=(10,5),title="Available Citibikes for Past 24 hours")
 ax.set_xlabel('Hour of the Day')
 ax.set_ylabel("Number of Available Citibikes")
 handles, labels = ax.get_legend_handles_labels()

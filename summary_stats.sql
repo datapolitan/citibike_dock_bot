@@ -9,7 +9,7 @@ WITH hour_ex AS (
         qns_avail_bikes
     FROM public.cb_boro_stats
     --account for the 4 hours for UTC
-    WHERE execution_time >= now() - interval '16 hours' 
+    WHERE execution_time >= now() - interval '28 hours' 
     )
 
 SELECT 
