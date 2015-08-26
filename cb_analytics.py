@@ -27,7 +27,7 @@ def tweet_status(day):
 con = psycopg2.connect(database="utility", user="datapolitan", host="utility.c1erymiua9dx.us-east-1.rds.amazonaws.com")
 cur = con.cursor()
 
-df = pd.read_sql_query(open("~/citibike_dock_bot/summary_stats.sql").read(),con,index_col='hour_ex')
+df = pd.read_sql_query(open("/home/ec2-user/citibike_dock_bot/summary_stats.sql").read(),con,index_col='hour_ex')
 
 con.close()
 
