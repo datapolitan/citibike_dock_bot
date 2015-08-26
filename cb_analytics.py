@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import time
 import datetime
 import twython
+import numpy as np
 from keys_boro import keys
 
 def tweet_status(day):
@@ -35,10 +36,12 @@ con.close()
 ax = df.plot(figsize=(10,5),title="Available Citibikes for Past 24 hours")
 ax.set_xlabel('Hour of the Day')
 ax.set_ylabel("Number of Available Citibikes")
+start, end = ax.get_xlim()
+ax.xaxis.set_ticks(np.arange(start, end, 4))
 handles, labels = ax.get_legend_handles_labels()
 lgd = ax.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5,-0.1))
 ax.grid('on')
-day = (datetime.datetime.now() - datetime.timedelta(hours=4)).strftime('%Y%m%d_%H')
+day = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime('%Y%m%d')
 plt.savefig(day + '.png', bbox_extra_artists=(lgd,), bbox_inches='tight')
 tweet_status(day)
 
