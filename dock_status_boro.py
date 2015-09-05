@@ -75,15 +75,16 @@ def tweet_status(avail_bikes_sum,totalDocks_sum,in_service_station_sum,boro_dict
     twitter = twython.Twython(CONSUMER_KEY,CONSUMER_SECRET,ACCESS_TOKEN,ACCESS_TOKEN_SECRET)
     #######
 
-    #######for calculating percents
-    # totalDocks_percent = 0
-    # if totalDocks_sum > 0:
-    #     totalDocks_percent = round(avail_bikes_sum/float(totalDocks_sum),4) * 100
-    #######
+    status_text = ''
+
+    if 'New Jersey' in boro_dict.keys():
+        status_text = "%s #Citibikes are available in %s active docks: %s in #Manhattan, %s in #Brooklyn, %s in #Queens, & %s in #NJ" % ("{:,.0f}".format(avail_bikes_sum),"{:,.0f}".format(totalDocks_sum),"{:,.0f}".format(boro_dict['Manhattan']),"{:,.0f}".format(boro_dict['Brooklyn']),"{:,.0f}".format(boro_dict['Queens']),"{:,.0f}".format(boro_dict['New Jersey'])
+    else:
+        status_text = "%s #Citibikes are available in %s active docks: %s in #Manhattan, %s in #Brooklyn, and %s in #Queens" % ("{:,.0f}".format(avail_bikes_sum),"{:,.0f}".format(totalDocks_sum),"{:,.0f}".format(boro_dict['Manhattan']),"{:,.0f}".format(boro_dict['Brooklyn']),"{:,.0f}".format(boro_dict['Queens']))
 
     ####Should add some length checking to tweet jik
     try:
-        twitter.update_status(status="%s #Citibikes are available in %s active docks: %s in #Manhattan, %s in #Brooklyn, and %s in #Queens" % ("{:,.0f}".format(avail_bikes_sum),"{:,.0f}".format(totalDocks_sum),"{:,.0f}".format(boro_dict['Manhattan']),"{:,.0f}".format(boro_dict['Brooklyn']),"{:,.0f}".format(boro_dict['Queens'])))
+        twitter.update_status(status=)
     except:
         pass
     # print "%s Citibikes are available in %s active docks, %s in Manhattan, %s in Brooklyn, and %s in Queens" % ("{:,.0f}".format(avail_bikes_sum),"{:,.0f}".format(totalDocks_sum),"{:,.0f}".format(boro_dict['Manhattan']),"{:,.0f}".format(boro_dict['Brooklyn']),"{:,.0f}".format(boro_dict['Queens']))
