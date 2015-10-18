@@ -9,12 +9,12 @@ from dateutil import parser
 
 from keys_boro import keys
 
-id_boro_dict = collections.defaultdict(str) #dictionary of station ids to boro
 
 def get_id_boro():
     '''
     set the id_boro_dict based on the values in the database and create the boro_dict to receive counts for each boro
     '''
+    id_boro_dict = collections.defaultdict(str) #dictionary of station ids to boro
     con = psycopg2.connect(database="utility", user="datapolitan", host="utility.c1erymiua9dx.us-east-1.rds.amazonaws.com")
     cur = con.cursor()
     cur.execute(open("query_boro.sql").read()) #read boros from database
@@ -22,9 +22,9 @@ def get_id_boro():
     for row in q:
         id_boro_dict[str(row[0])] = row[1]
     con.close()
-    return
+    return id_boro_dict
 
-def get_cb_dock():
+def get_cb_dock(id_boro_dict):
     '''
     get the dock status and compute summary statistics for tweeting
     '''
@@ -102,8 +102,18 @@ def write_status(execution_time,avail_bikes_sum,boro_bike_list):
 
 #####program execution starts
 
-get_id_boro() #initialize id_boro_dict and boro_list from database on first run
 
-while True: #infinite loop 
-    get_cb_dock() #get dock count and tweet
-    sleep(600) #sleep for 10 minutes
+def main():
+    # id_city_dict = collections.defaultdict(str)
+    ibd = get_id_boro()
+    get_cb_dock(ibd)
+
+if __name__ == "__main__":
+    main()
+
+
+# get_id_boro() #initialize id_boro_dict and boro_list from database on first run
+
+# while True: #infinite loop 
+#     get_cb_dock() #get dock count and tweet
+#     sleep(600) #sleep for 10 minutes
