@@ -4,3 +4,5 @@
 images/*
 *.ipynb
 keys*.*
+pgconnect.py
+*.sh
