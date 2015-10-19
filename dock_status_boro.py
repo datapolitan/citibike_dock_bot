@@ -8,14 +8,18 @@ import time
 from dateutil import parser
 
 from keys_boro import keys
+from pgconnect import pgconnect
 
+db = pgconnect['db']
+user = pgconnect['user']
+host = pgconnect['host']
 
 def get_id_boro():
     '''
     set the id_boro_dict based on the values in the database and create the boro_dict to receive counts for each boro
     '''
     id_boro_dict = collections.defaultdict(str) #dictionary of station ids to boro
-    con = psycopg2.connect(database="utility", user="datapolitan", host="utility.c1erymiua9dx.us-east-1.rds.amazonaws.com")
+    con = psycopg2.connect(database=db, user=user, host=host, port=5432)
     cur = con.cursor()
     cur.execute(open("/home/ec2-user/citibike_dock_bot/query_boro.sql").read()) #read boros from database
     q = cur.fetchall()
@@ -81,13 +85,12 @@ def tweet_status(avail_bikes_sum,totalDocks_sum,in_service_station_sum,boro_dict
     except TwythonError as e:
         print e
         pass
-    # print "%s Citibikes are available in %s active docks, %s in Manhattan, %s in Brooklyn, and %s in Queens" % ("{:,.0f}".format(avail_bikes_sum),"{:,.0f}".format(totalDocks_sum),"{:,.0f}".format(boro_dict['Manhattan']),"{:,.0f}".format(boro_dict['Brooklyn']),"{:,.0f}".format(boro_dict['Queens']))
     return
 
 def write_status(execution_time,avail_bikes_sum,boro_bike_list):
     # write active bike sums into database
 
-    con = psycopg2.connect(database="utility", user="datapolitan", host="utility.c1erymiua9dx.us-east-1.rds.amazonaws.com")
+    con = psycopg2.connect(database=db, user=user, host=host, port=5432)
     cur = con.cursor()
     
     sql = "INSERT INTO public.cb_boro_stats (execution_time, nyc_avail_bikes, mhtn_avail_bikes, brklyn_avail_bikes, qns_avail_bikes,nj_avail_bikes) VALUES (%s,%s,%s,%s,%s,%s)"
