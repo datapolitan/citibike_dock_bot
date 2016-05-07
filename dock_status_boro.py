@@ -6,6 +6,7 @@ from twython import Twython, TwythonError
 from time import sleep
 import time
 from dateutil import parser
+import sys
 
 from keys_boro import keys
 from pgconnect import pgconnect
@@ -33,7 +34,17 @@ def get_cb_dock(id_boro_dict):
     get the dock status and compute summary statistics for tweeting
     '''
     #need to wrap in try-catch
-    r = requests.get('http://www.citibikenyc.com/stations/json')    
+    try:
+        r = requests.get('http://www.citibikenyc.com/stations/json')
+    except requests.exceptions.ContentDecodingError as e:
+        #likely happening because of a redirect error. See https://github.com/kennethreitz/requests/issues/1939
+        time.sleep(30) #sleep 30 seconds
+        try:
+            r = requests.get('http://www.citibikenyc.com/stations/json') #try again
+        except requests.exceptions.ContentDecodingError as e2:
+            print(sys.exc_info()[0])
+            sys.exit() #exit out of job
+
     
     ####### process the stations json file
     totalDocks_sum = 0
