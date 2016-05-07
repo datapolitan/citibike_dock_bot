@@ -2,8 +2,8 @@
 
 WITH boro AS (
 SELECT id, boroname AS boro
-FROM public.dock_location d
-LEFT OUTER JOIN public.nyc_boro b
+FROM citibikedock.dock_location d
+LEFT OUTER JOIN citibikedock.nyc_boro b
     ON ST_CONTAINS(b.geom,d.geom)
 )
 

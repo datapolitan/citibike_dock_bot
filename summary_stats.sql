@@ -7,7 +7,7 @@ WITH hour_ex AS (
         mhtn_avail_bikes,
         brklyn_avail_bikes,
         qns_avail_bikes
-    FROM public.cb_boro_stats
+    FROM citibikedock.cb_boro_stats
     --account for the 4 hours for UTC
     WHERE execution_time >= now() - interval '28 hours' 
     )

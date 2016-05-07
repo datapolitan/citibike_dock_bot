@@ -93,7 +93,7 @@ def write_status(execution_time,avail_bikes_sum,boro_bike_list):
     con = psycopg2.connect(database=db, user=user, host=host, port=5432)
     cur = con.cursor()
     
-    sql = "INSERT INTO public.cb_boro_stats (execution_time, nyc_avail_bikes, mhtn_avail_bikes, brklyn_avail_bikes, qns_avail_bikes,nj_avail_bikes) VALUES (%s,%s,%s,%s,%s,%s)"
+    sql = "INSERT INTO citibikedock.cb_boro_stats (execution_time, nyc_avail_bikes, mhtn_avail_bikes, brklyn_avail_bikes, qns_avail_bikes,nj_avail_bikes) VALUES (%s,%s,%s,%s,%s,%s)"
     cur.execute(sql,tuple([execution_time] + [avail_bikes_sum] + boro_bike_list))
     con.commit()
     con.close()

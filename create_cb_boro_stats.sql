@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS public.cb_boro_stats;
+DROP TABLE IF EXISTS citibikedock.cb_boro_stats;
 
-CREATE TABLE public.cb_boro_stats (
+CREATE TABLE citibikedock.cb_boro_stats (
     execution_time timestamp,
     nyc_avail_bikes int,
     mhtn_avail_bikes int,
