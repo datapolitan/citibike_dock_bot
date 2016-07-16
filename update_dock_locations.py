@@ -21,7 +21,7 @@ for station in r.json()['stationBeanList']:
     loc_dict[station['id']] = [station['latitude'],station['longitude']]
 
 #delete rows in the table
-cur.execute(open(create_dock_locations.sql).read())
+cur.execute(open("create_dock_location.sql",'r').read())
 con.commit()
 
 #write new rows to table
