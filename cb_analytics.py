@@ -7,6 +7,12 @@ import twython
 import numpy as np
 from keys_boro import keys
 
+from pgconnect import pgconnect
+
+db = pgconnect['db']
+user = pgconnect['user']
+host = pgconnect['host']
+
 def tweet_status(day):
     '''
     a function to tweet the input values
@@ -25,7 +31,7 @@ def tweet_status(day):
     twitter.update_status(status='The past 24 hours of active #Citibikes across #NYC, #Manhattan, #Brooklyn, and #Queens', media_ids=[response['media_id']])
     return
 
-con = psycopg2.connect(database="utility", user="datapolitan", host="utility.c1erymiua9dx.us-east-1.rds.amazonaws.com")
+con = psycopg2.connect(database=db, user=user, host=host, port=5432)
 cur = con.cursor()
 
 df = pd.read_sql_query(open("/home/ec2-user/citibike_dock_bot/summary_stats.sql").read(),con,index_col='hour_ex')
