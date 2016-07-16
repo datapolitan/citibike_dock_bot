@@ -5,6 +5,7 @@ A script to update the citibike ids and locations
 import collections
 import requests
 import psycopg2
+from pgconnect import pgconnect
 
 db = pgconnect['db']
 user = pgconnect['user']
@@ -20,7 +21,7 @@ for station in r.json()['stationBeanList']:
     loc_dict[station['id']] = [station['latitude'],station['longitude']]
 
 #delete rows in the table
-cur.execute("DELETE FROM citibikedock.dock_location")
+cur.execute(open(create_dock_locations.sql).read())
 con.commit()
 
 #write new rows to table
