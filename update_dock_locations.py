@@ -6,7 +6,11 @@ import collections
 import requests
 import psycopg2
 
-con = psycopg2.connect(database="utility", user="datapolitan", host="utility.c1erymiua9dx.us-east-1.rds.amazonaws.com")
+db = pgconnect['db']
+user = pgconnect['user']
+host = pgconnect['host']
+
+con = psycopg2.connect(database=db, user=user, host=host, port=5432)
 cur = con.cursor()
 
 r = requests.get('http://www.citibikenyc.com/stations/json')
